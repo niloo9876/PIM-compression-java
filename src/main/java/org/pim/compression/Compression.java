@@ -7,7 +7,7 @@ import com.upmem.dpu.DpuSystem;
 import java.io.File;
 
 public class Compression {
-    public readInputHost(String inputFile, ...) {
+    public void readInputHost(String inputFile) {
         File uncompressed = new File(inputFile);
 
         // TODO Set the input length
