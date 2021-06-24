@@ -119,13 +119,17 @@ public class Compression {
             system.copy(output, "output_buffer");
             System.out.println("copied output buffer");
 
-
+            int size = 0;
+            int offset = 0;
             for (int dpu=0; dpu < NR_DPUS; dpu++) {
                 for (int task=0; task < NR_TASKLETS; task++) {
                     // Read the size
-                    int size = readInt(outputLength[dpu], 4 * task);
-                    int offset = readInt(outputOffset[dpu], 4 * task);
-                    writer.write(output[dpu], offset, size);
+                    size = readInt(outputLength[dpu], 4 * task);
+                    if (size > 0) {
+                        offset = readInt(outputOffset[dpu], 4 * task);
+                        System.out.println(String.format("size %d, offset %d", size, offset);
+                        writer.write(output[dpu], offset, size);
+                    }
                 }
             }
         } catch ( Exception e) {
