@@ -100,13 +100,13 @@ public class Compression {
             byte[] blockSize = new byte[4];
             write(BLOCK_SIZE, blockSize, 0);
             system.copy("block_size", blockSize);
-	        System.out.println("copied");
+	        System.out.println("copied block size");
             system.copy("input_length", inputLength);
             System.out.println("copied input length");
 	        system.copy("input_buffer", input);
             System.out.println("copied input");
 	        system.copy("input_block_offset", inputBlockOffset);
-            System.out.println("copiedinput block offset");
+            System.out.println("copied input block offset");
 	        system.copy("output_offset", outputOffset);
             System.out.println("copied output offset");
 
@@ -114,7 +114,9 @@ public class Compression {
             System.out.println("Executed");
             // Copy out output_buffer and output_length
             system.copy(outputLength, "output_length");
+            System.out.println("copied output length");
             system.copy(output, "output_buffer");
+            System.out.println("copied output buffer");
 
 
             for (int dpu=0; dpu < NR_DPUS; dpu++) {
