@@ -38,7 +38,6 @@ public class Compression {
         fileLength = (int) inputFile.length();
         outputLength = new byte[NR_DPUS][4 * NR_TASKLETS]; // wram output_length
         inputLength = new byte[NR_DPUS][4]; // wram input_length
-        System.out.println(inputLength[0]);
     }
 
     public static void snappyCompress() throws IOException {
@@ -48,9 +47,7 @@ public class Compression {
         int inputBlocksPerTasklet = (numBlocks + TOTAL_NR_TASKLETS - 1) / TOTAL_NR_TASKLETS;
 
         int maxLength = DMA_ALIGNED(maxCompressedLength(inputBlocksPerDpu * BLOCK_SIZE));
-        System.out.println(maxLength);
 
-        System.out.println(String.format("numBlocks %d, inputBlocksPerDPU %d, inputBlocksPerTasklet %d", numBlocks, inputBlocksPerDpu, inputBlocksPerTasklet));
         // TODO: Not very memory efficient, should be able to allocate buffer for only the dpus that need to be running
         input = new byte[NR_DPUS][inputBlocksPerDpu * BLOCK_SIZE]; // mram input_buffer
         output = new byte[NR_DPUS][maxLength];// mram output_buffer
@@ -67,13 +64,8 @@ public class Compression {
 
                 // write the input length for each dpu
                 write(dpuBlocks * BLOCK_SIZE, inputLength[dpuIndex], 0);
-                System.out.println(input[dpuIndex] == null);
-                System.out.println((dpuBlocks == 0 ? 1 : dpuBlocks) * BLOCK_SIZE);
-                assert (input[dpuIndex] != null);
                 bytesRead = reader.read(input[dpuIndex], 0, (dpuBlocks == 0 ? 1 : dpuBlocks) * BLOCK_SIZE);
-                // TODO: Handle the scenario where the last block is smaller than block size
-                assert (bytesRead == (dpuBlocks == 0 ? 1 : dpuBlocks) * BLOCK_SIZE);
-                System.out.println(String.format("DPU %d, numBlocks %d, bytesRead %d", dpuIndex, dpuBlocks, bytesRead));
+
                 dpuIndex++;
                 taskIndex = 0;
                 dpuBlocks = 0;
@@ -85,7 +77,6 @@ public class Compression {
                 // Assign values to inputBlockOffser and outputOffset (L514-515)
                 write(i, inputBlockOffset[dpuIndex],4 * taskIndex);
                 write(DMA_ALIGNED(maxCompressedLength(BLOCK_SIZE * dpuBlocks)), outputOffset[dpuIndex], 4 * taskIndex);
-                System.out.println("output length aligned " + DMA_ALIGNED(maxCompressedLength(BLOCK_SIZE * dpuBlocks)) + " unaligned " + maxCompressedLength(BLOCK_SIZE * dpuBlocks));
                 taskIndex++;
             }
             dpuBlocks++;
