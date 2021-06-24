@@ -47,7 +47,7 @@ public class Compression {
         int inputBlocksPerDpu = (numBlocks + NR_DPUS - 1) / NR_DPUS;
         int inputBlocksPerTasklet = (numBlocks + TOTAL_NR_TASKLETS - 1) / TOTAL_NR_TASKLETS;
 
-        int maxLength = maxCompressedLength(inputBlocksPerDpu * BLOCK_SIZE);
+        int maxLength = DMA_ALIGNED(maxCompressedLength(inputBlocksPerDpu * BLOCK_SIZE));
         System.out.println(maxLength);
 
         System.out.println(String.format("numBlocks %d, inputBlocksPerDPU %d, inputBlocksPerTasklet %d", numBlocks, inputBlocksPerDpu, inputBlocksPerTasklet));
