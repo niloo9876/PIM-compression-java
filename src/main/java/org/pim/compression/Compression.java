@@ -65,7 +65,7 @@ public class Compression {
             if (dpuBlocks == inputBlocksPerDpu) {
                 // write the input length for each dpu
                 write(dpuBlocks * BLOCK_SIZE, inputLength[dpuIndex], 0);
-                bytesRead = this.reader.read(input[dpuIndex], fileOffset, dpuBlocks * BLOCK_SIZE);
+                bytesRead = reader.read(input[dpuIndex], fileOffset, dpuBlocks * BLOCK_SIZE);
                 // TODO: Handle the scenario where the last block is smaller than block size
                 assert (bytesRead == dpuBlocks * BLOCK_SIZE);
                 fileOffset+= bytesRead;
