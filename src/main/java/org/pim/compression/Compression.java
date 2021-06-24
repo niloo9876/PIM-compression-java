@@ -49,9 +49,9 @@ public class Compression {
 
         int numBlocks = (fileLength + BLOCK_SIZE - 1) / BLOCK_SIZE;
         int inputBlocksPerDpu = (numBlocks + NR_DPUS - 1) / NR_DPUS;
-        int inputBlocksPerTasklet = (numBlocks + TOTAL_NR_TASKLETS);
+        int inputBlocksPerTasklet = (numBlocks + TOTAL_NR_TASKLETS - 1) / TOTAL_NR_TASKLETS;
 
-        System.out.println(String.format("numBlocks %d, inputBlocksPerDPU %d, inputBlocksPerTasklet %d",numBlocks, inputBlocksPerDpu, inputBlocksPerTasklet));
+        System.out.println(String.format("numBlocks %d, inputBlocksPerDPU %d, inputBlocksPerTasklet %d", numBlocks, inputBlocksPerDpu, inputBlocksPerTasklet));
         byte [][] inputBlockOffset = new byte[NR_DPUS][4 * NR_TASKLETS];
         byte [][] outputOffset = new byte[NR_DPUS][4 * NR_TASKLETS];
 
@@ -61,7 +61,7 @@ public class Compression {
         int bytesRead;
         for (int i = 0; i < numBlocks; i++) {
             // we have reached the next DPU's boundary, update the index
-            if (dpuBlocks == inputBlocksPerDpu) {
+            if (dpuBlocks == inputBlocksPerDpu || i == numBlocks-1) {
 
                 // write the input length for each dpu
                 write(dpuBlocks * BLOCK_SIZE, inputLength[dpuIndex], 0);
@@ -76,6 +76,7 @@ public class Compression {
 
             // If we have reached the next tasks's boundary, save the offset
             if (dpuBlocks == (inputBlocksPerTasklet * taskIndex)) {
+                // TODO: Potential bug for the first tasklet, first dpuBlock
                 // Assign values to inputBlockOffser and outputOffset (L514-515)
                 write(i, inputBlockOffset[dpuIndex],4 * taskIndex);
                 write(maxCompressedLength(BLOCK_SIZE * dpuBlocks), outputOffset[dpuIndex], 4 * taskIndex);
