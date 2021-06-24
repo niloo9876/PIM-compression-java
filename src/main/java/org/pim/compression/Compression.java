@@ -12,7 +12,7 @@ public class Compression {
     private static final int NR_TASKLETS = 24;
     private static final int MASK = 128;
     private static final int TOTAL_NR_TASKLETS = NR_DPUS * NR_TASKLETS;
-    private static final String DPU_COMPRESS_PROGRAM = "dpu-compress/compress.dpu";
+    private static final String DPU_COMPRESS_PROGRAM = "/home/upmem0016/niloofar_nemone/PIM-compression/snappy/dpu-compress/compress.dpu";
     private static int fileLength;
     private static byte[][] input;
     private static byte[][] output;
