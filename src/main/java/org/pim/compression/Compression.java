@@ -84,7 +84,7 @@ public class Compression {
                 // Assign values to inputBlockOffser and outputOffset (L514-515)
                 write(i, inputBlockOffset[dpuIndex],4 * taskIndex);
                 write(DMA_ALIGNED(maxCompressedLength(BLOCK_SIZE * dpuBlocks)), outputOffset[dpuIndex], 4 * taskIndex);
-                System.out.println("next tasklet");
+                System.out.println("output length aligned " + DMA_ALIGNED(maxCompressedLength(BLOCK_SIZE * dpuBlocks)) + " unaligned " + maxCompressedLength(BLOCK_SIZE * dpuBlocks));
                 taskIndex++;
             }
             dpuBlocks++;
