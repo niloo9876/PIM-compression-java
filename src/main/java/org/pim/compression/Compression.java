@@ -58,17 +58,15 @@ public class Compression {
         int dpuIndex = 0;
         int taskIndex = 0;
         int dpuBlocks = 0;
-        int fileOffset = 0;
         int bytesRead;
         for (int i = 0; i < numBlocks; i++) {
             // we have reached the next DPU's boundary, update the index
             if (dpuBlocks == inputBlocksPerDpu) {
                 // write the input length for each dpu
                 write(dpuBlocks * BLOCK_SIZE, inputLength[dpuIndex], 0);
-                bytesRead = reader.read(input[dpuIndex], fileOffset, dpuBlocks * BLOCK_SIZE);
+                bytesRead = reader.read(input[dpuIndex], 0, dpuBlocks * BLOCK_SIZE);
                 // TODO: Handle the scenario where the last block is smaller than block size
                 assert (bytesRead == dpuBlocks * BLOCK_SIZE);
-                fileOffset+= bytesRead;
                 dpuIndex++;
                 taskIndex = 0;
                 dpuBlocks = 0;
@@ -94,13 +92,18 @@ public class Compression {
             byte[] blockSize = new byte[4];
             write(BLOCK_SIZE, blockSize, 0);
             system.copy("block_size", blockSize);
+	    System.out.println("copied");
             system.copy("input_length", inputLength);
-            system.copy("input_buffer", input);
-            system.copy("input_block_offset", inputBlockOffset);
-            system.copy("output_offset", outputOffset);
+            System.out.println("copied input length");
+	    system.copy("input_buffer", input);
+            System.out.println("copied input");
+	    system.copy("input_block_offset", inputBlockOffset);
+            System.out.println("copiedinput block offset");
+	    system.copy("output_offset", outputOffset);
+            System.out.println("copied output offset");
 
             system.exec();
-
+            System.out.println("Executed");
             // Copy out output_buffer and output_length
             system.copy(outputLength, "output_length");
             system.copy(output, "output_buffer");
