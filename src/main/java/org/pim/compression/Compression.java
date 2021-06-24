@@ -127,7 +127,7 @@ public class Compression {
                     size = readInt(outputLength[dpu], 4 * task);
                     if (size > 0) {
                         offset = readInt(outputOffset[dpu], 4 * task);
-                        System.out.println(String.format("size %d, offset %d", size, offset);
+                        System.out.println(String.format("size %d, offset %d", size, offset));
                         writer.write(output[dpu], offset, size);
                     }
                 }
