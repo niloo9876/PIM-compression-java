@@ -204,6 +204,7 @@ public class Compression {
             snappyCompress();
         } catch (Exception e) {
             System.out.println("Exception occurred:" + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
