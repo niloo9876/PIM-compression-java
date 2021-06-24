@@ -118,6 +118,11 @@ public class Compression {
             System.out.println("Exception occurred:" + e.getMessage());
         }
 
+        // Close all files and readers
+        reader.close();
+        writer.flush();
+        writer.close();
+
         System.out.println("Done compressing; the result is written to output.txt");
     }
 
