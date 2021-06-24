@@ -51,7 +51,7 @@ public class Compression {
         int inputBlocksPerDpu = (numBlocks + NR_DPUS - 1) / NR_DPUS;
         int inputBlocksPerTasklet = (numBlocks + TOTAL_NR_TASKLETS);
 
-
+        System.out.println(String.format("numBlocks %d, inputBlocksPerDPU %d, inputBlocksPerTasklet %d",numBlocks, inputBlocksPerDpu, inputBlocksPerTasklet));
         byte [][] inputBlockOffset = new byte[NR_DPUS][4 * NR_TASKLETS];
         byte [][] outputOffset = new byte[NR_DPUS][4 * NR_TASKLETS];
 
@@ -62,11 +62,13 @@ public class Compression {
         for (int i = 0; i < numBlocks; i++) {
             // we have reached the next DPU's boundary, update the index
             if (dpuBlocks == inputBlocksPerDpu) {
+
                 // write the input length for each dpu
                 write(dpuBlocks * BLOCK_SIZE, inputLength[dpuIndex], 0);
                 bytesRead = reader.read(input[dpuIndex], 0, dpuBlocks * BLOCK_SIZE);
                 // TODO: Handle the scenario where the last block is smaller than block size
                 assert (bytesRead == dpuBlocks * BLOCK_SIZE);
+                System.out.println(String.format("DPU %d, numBlocks %d, bytesRead %d", dpuIndex, dpuBlocks, bytesRead));
                 dpuIndex++;
                 taskIndex = 0;
                 dpuBlocks = 0;
@@ -77,6 +79,7 @@ public class Compression {
                 // Assign values to inputBlockOffser and outputOffset (L514-515)
                 write(i, inputBlockOffset[dpuIndex],4 * taskIndex);
                 write(maxCompressedLength(BLOCK_SIZE * dpuBlocks), outputOffset[dpuIndex], 4 * taskIndex);
+                System.out.println("next tasklet");
                 taskIndex++;
             }
             dpuBlocks++;
@@ -92,14 +95,14 @@ public class Compression {
             byte[] blockSize = new byte[4];
             write(BLOCK_SIZE, blockSize, 0);
             system.copy("block_size", blockSize);
-	    System.out.println("copied");
+	        System.out.println("copied");
             system.copy("input_length", inputLength);
             System.out.println("copied input length");
-	    system.copy("input_buffer", input);
+	        system.copy("input_buffer", input);
             System.out.println("copied input");
-	    system.copy("input_block_offset", inputBlockOffset);
+	        system.copy("input_block_offset", inputBlockOffset);
             System.out.println("copiedinput block offset");
-	    system.copy("output_offset", outputOffset);
+	        system.copy("output_offset", outputOffset);
             System.out.println("copied output offset");
 
             system.exec();
