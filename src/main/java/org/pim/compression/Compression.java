@@ -65,13 +65,13 @@ public class Compression {
                 // write the input length for each dpu
                 write(dpuBlocks * BLOCK_SIZE, inputLength[dpuIndex], 0);
                 bytesRead = reader.read(input[dpuIndex], 0, (dpuBlocks == 0 ? 1 : dpuBlocks) * BLOCK_SIZE);
-                if (bytesRead < (dpuBlocks == 0 ? 1 : dpuBlocks) * BLOCK_SIZE ) {
-                    // End of the file
-                    break;
-                }
                 dpuIndex++;
                 taskIndex = 0;
                 dpuBlocks = 0;
+                if (bytesRead < (dpuBlocks == 0 ? 1 : dpuBlocks) * BLOCK_SIZE || dpuIndex >= NR_DPUS) {
+                    // End of the file
+                    break;
+                }
             }
 
             // If we have reached the next tasks's boundary, save the offset
