@@ -65,9 +65,10 @@ public class Compression {
 
                 // write the input length for each dpu
                 write(dpuBlocks * BLOCK_SIZE, inputLength[dpuIndex], 0);
-                bytesRead = reader.read(input[dpuIndex], 0, dpuBlocks * BLOCK_SIZE);
+                assert (input[dpuIndex] != null);
+                bytesRead = reader.read(input[dpuIndex], 0, (dpuBlocks == 0 ? 1 : dpuBlocks) * BLOCK_SIZE);
                 // TODO: Handle the scenario where the last block is smaller than block size
-                assert (bytesRead == dpuBlocks * BLOCK_SIZE);
+                assert (bytesRead == (dpuBlocks == 0 ? 1 : dpuBlocks) * BLOCK_SIZE);
                 System.out.println(String.format("DPU %d, numBlocks %d, bytesRead %d", dpuIndex, dpuBlocks, bytesRead));
                 dpuIndex++;
                 taskIndex = 0;
