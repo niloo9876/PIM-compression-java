@@ -83,7 +83,7 @@ public class Compression {
                 // TODO: Potential bug for the first tasklet, first dpuBlock
                 // Assign values to inputBlockOffser and outputOffset (L514-515)
                 write(i, inputBlockOffset[dpuIndex],4 * taskIndex);
-                write(maxCompressedLength(BLOCK_SIZE * dpuBlocks), outputOffset[dpuIndex], 4 * taskIndex);
+                write(DMA_ALIGNED(maxCompressedLength(BLOCK_SIZE * dpuBlocks)), outputOffset[dpuIndex], 4 * taskIndex);
                 System.out.println("next tasklet");
                 taskIndex++;
             }
@@ -139,6 +139,15 @@ public class Compression {
         System.out.println("Done compressing; the result is written to output.txt");
     }
 
+    private static int DMA_ALIGNED(int x) {
+        return (x + 7) & ~7;
+    }
+
+    /**
+     * Given the uncompressed length, returns the maximum possible length when compressed
+     * @param uncompressedLength
+     * @return
+     */
     private static int maxCompressedLength(int uncompressedLength) {
         if (uncompressedLength > 0)
             return (32 + uncompressedLength + uncompressedLength / 6);
