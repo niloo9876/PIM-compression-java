@@ -48,6 +48,7 @@ public class Compression {
         int inputBlocksPerTasklet = (numBlocks + TOTAL_NR_TASKLETS - 1) / TOTAL_NR_TASKLETS;
 
         int maxLength = maxCompressedLength(inputBlocksPerDpu * BLOCK_SIZE);
+        System.out.println(maxLength);
 
         System.out.println(String.format("numBlocks %d, inputBlocksPerDPU %d, inputBlocksPerTasklet %d", numBlocks, inputBlocksPerDpu, inputBlocksPerTasklet));
         // TODO: Not very memory efficient, should be able to allocate buffer for only the dpus that need to be running
