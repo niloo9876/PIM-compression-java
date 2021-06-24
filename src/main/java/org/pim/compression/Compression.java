@@ -23,10 +23,6 @@ public class Compression {
 
 
     public static void snappySetup(String inputFileName) {
-        int maxLength = maxCompressedLength(fileLength);
-        input = new byte[NR_DPUS][]; // mram input_buffer
-        output = new byte[NR_DPUS][];// mram output_buffer
-
         File inputFile = new File(inputFileName);
         File outputFile = new File("output.snappy");
        try {
@@ -42,7 +38,7 @@ public class Compression {
         fileLength = (int) inputFile.length();
         outputLength = new byte[NR_DPUS][4 * NR_TASKLETS]; // wram output_length
         inputLength = new byte[NR_DPUS][4]; // wram input_length
-
+        System.out.println(inputLength[0]);
     }
 
     public static void snappyCompress() throws IOException {
@@ -51,7 +47,12 @@ public class Compression {
         int inputBlocksPerDpu = (numBlocks + NR_DPUS - 1) / NR_DPUS;
         int inputBlocksPerTasklet = (numBlocks + TOTAL_NR_TASKLETS - 1) / TOTAL_NR_TASKLETS;
 
+        int maxLength = maxCompressedLength(inputBlocksPerDpu * BLOCK_SIZE);
+
         System.out.println(String.format("numBlocks %d, inputBlocksPerDPU %d, inputBlocksPerTasklet %d", numBlocks, inputBlocksPerDpu, inputBlocksPerTasklet));
+        // TODO: Not very memory efficient, should be able to allocate buffer for only the dpus that need to be running
+        input = new byte[NR_DPUS][inputBlocksPerDpu * BLOCK_SIZE]; // mram input_buffer
+        output = new byte[NR_DPUS][maxLength];// mram output_buffer
         byte [][] inputBlockOffset = new byte[NR_DPUS][4 * NR_TASKLETS];
         byte [][] outputOffset = new byte[NR_DPUS][4 * NR_TASKLETS];
 
